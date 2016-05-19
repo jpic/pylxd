@@ -45,6 +45,10 @@ class IntegrationTestCase(unittest.TestCase):
                        'alias': 'busybox'},
         }
         result = self.lxd['containers'].post(json=machine)
+
+        if result.status_code >= 400:
+            raise RuntimeError(result.json())
+
         operation_uuid = result.json()['operation'].split('/')[-1]
         result = self.lxd.operations[operation_uuid].wait.get()
 

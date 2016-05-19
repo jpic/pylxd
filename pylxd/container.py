@@ -64,6 +64,9 @@ class Container(mixin.Waitable, mixin.Marshallable):
         """Create a new container config."""
         response = client.api.containers.post(json=config)
 
+        if response.status_code >= 400:
+            raise RuntimeError(response.json(), config)
+
         if wait:
             Operation.wait_for_operation(client, response.json()['operation'])
         return cls(name=config['name'])
@@ -117,6 +120,10 @@ class Container(mixin.Waitable, mixin.Marshallable):
             'timeout': timeout,
             'force': force
             })
+
+        if response.status_code >= 400:
+            raise RuntimeError(response.json())
+
         if wait:
             self.wait_for_operation(response.json()['operation'])
             self.reload()
@@ -221,5 +228,9 @@ class Container(mixin.Waitable, mixin.Marshallable):
             'wait-for-websocket': False,
             'interactive': False,
             })
+
+        if response.status_code >= 400:
+            raise RuntimeError(response.json())
+
         operation_id = response.json()['operation']
         self.wait_for_operation(operation_id)
