@@ -45,6 +45,18 @@ class _APINode(object):
 
     def __init__(self, api_endpoint):
         self._api_endpoint = api_endpoint
+        self._requests_kwargs = {}
+
+        client_crt = os.environ.get('LXD_CLIENT_CRT', None)
+        client_key = os.environ.get('LXD_CLIENT_KEY', None)
+
+        if client_crt and client_key:
+            self._requests_kwargs['cert'] = (client_crt, client_key)
+
+        if os.environ.get('LXD_INSECURE', False):
+            self._requests_kwargs['verify'] = False
+            from requests.packages.urllib3.exceptions import InsecureRequestWarning
+            requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
     def __getattr__(self, name):
         return self.__class__('{}/{}'.format(self._api_endpoint, name))
@@ -61,18 +73,22 @@ class _APINode(object):
 
     def get(self, *args, **kwargs):
         """Perform an HTTP GET."""
+        kwargs.update(self._requests_kwargs)
         return self.session.get(self._api_endpoint, *args, **kwargs)
 
     def post(self, *args, **kwargs):
         """Perform an HTTP POST."""
+        kwargs.update(self._requests_kwargs)
         return self.session.post(self._api_endpoint, *args, **kwargs)
 
     def put(self, *args, **kwargs):
         """Perform an HTTP PUT."""
+        kwargs.update(self._requests_kwargs)
         return self.session.put(self._api_endpoint, *args, **kwargs)
 
     def delete(self, *args, **kwargs):
         """Perform an HTTP delete."""
+        kwargs.update(self._requests_kwargs)
         return self.session.delete(self._api_endpoint, *args, **kwargs)
 
 

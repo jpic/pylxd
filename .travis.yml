@@ -1,8 +1,19 @@
 language: python
 python:
-  - "2.7"
-  - "3.4"
+- '2.7'
 install: pip install -U -r requirements.txt -r test-requirements.txt
 script:
-  - nosetests pylxd
-  - flake8 --ignore=E123,E125
+- nosetests pylxd
+- nosetests integration
+- flake8 --ignore=E123,E125
+env:
+  global:
+  - LXD_INSECURE=y
+  - LXD_CLIENT_KEY=client.key
+  - LXD_CLIENT_CRT=client.crt
+  - secure: ju8LTZEVwrUWRvfDp85iyzGko2HVsP176dRMnFXO7hZ1/nyXa3B4ktw0r1fTvdzwqS0tdE3cWj4C0CK+yrUjNvpO3jcPC4sHiW91/4wN+ihzXb2/fEdUdISMIXtzwVq/1aIjftYdlLtfR8PIWMLFQt4SoBWILxQ9RIfzY83v4NHYIAxVJU7UVgiurwLP8CxENgaElLhHGEtGKnl2Eqb+pZvyF/dByRFY5psldJZIbUZ4uJG2Qhmskre1IhXu3NMo1t2jD2fO8Esp4onYO4aBMxqssGF6L/nbvsthgCxInnhIlkmeZjU3D0NZddIEhY4aJk5zyQ0EghJ8ZeC5KtAQp1HsJ6NzfIp12DrbU1ZMZxvhBveblIrkkxY3V2kNqly4rhXbPnDFD1771ZsW/Li1U3+5sD67gR95GpS2Hf89uNfeVHNZzB1TaUIcnKanbfRUTUt7oF2k9XB0Zcx7D0NQfkVkmHX3l/GPjbaWQZb50QnGuo6n67uIwSl5OukvefTi7kkgowjyat7qUPNSB0Nu7M1jujeld/2t45seM7YGWAeyky01HhE/Q4vdV/Jm7nawu3GLdD/xo0gytbo9dCf5xNR/YIcImpokEz5cdcyRB1Sm4ovi5Wkqv1artAmVgdHqsXeFxuD4ditCEqf7dBKwj0kuc6ZE0kE/jgZRE+D/tU0=
+before_install:
+- openssl aes-256-cbc -K $encrypted_ca29811a1b1e_key -iv $encrypted_ca29811a1b1e_iv
+  -in .travis/client.key.enc -out .travis/client.key -d
+- openssl aes-256-cbc -K $encrypted_ca29811a1b1e_key -iv $encrypted_ca29811a1b1e_iv
+  -in .travis/client.crt.enc -out .travis/client.crt -d
