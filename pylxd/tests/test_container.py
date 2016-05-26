@@ -146,3 +146,7 @@ class TestContainerState(testing.PyLXDTestCase):
 
         self.assertEqual('Running', state.status)
         self.assertEqual(103, state.status_code)
+
+    def test_constructor(self):
+        subject = container.ContainerState(foo='bar')
+        self.assertEqual(subject.foo, 'bar')
